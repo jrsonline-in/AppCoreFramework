@@ -1,0 +1,7 @@
+{
+  "name": "base.db.mongo",
+  "version": "0.0.1",
+  "description": "Mongo DB ",
+  "author": "App Core",
+  "script":"mongo.js"
+}

@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>My Cart: Login</title>
+	<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.4/angular.min.js"></script>
+	<script type="text/javascript" src="app.js"></script>
+	<script type="text/javascript" src="user_service.js"></script>
+</head>
+<body class="container">
+	<div ng-app="loginApp" ng-controller="loginCtrl">
+		<div ng-include="'menubar.html'"></div>
+		<div style="float: right;">New User? <a href="register.html"class="w3-btn w3-green w3-ripple"> Register </a></div>
+		<h2>Login to MyCart</h2>
+		<div style="color: red" ng-hide="noErrMsg">{{ermsg}}</div>
+		<table class="w3-table">
+			<tr>
+				<td>User Name:</td>
+				<td><input ng-model="uname" ></td>
+			</tr>
+			<tr>
+				<td>Password:</td>
+				<td><input ng-model="upwd"  type="password">
+				</td>
+			</tr>
+			<tr>
+				<td>&nbsp;</td>
+				<td align="right">
+					<button ng-click="login()" class="w3-btn w3-green w3-ripple">
+						Login</button>
+				</td>
+			</tr>
+		</table>
+	</div>
+	<script type="text/javascript">
+	angular.module("loginApp", []).controller("loginCtrl", loginCtrlFn );
+	/*
+	window.onload = window.onreadystatechange = function(){
+		if(angular){
+			angular.module("loginApp", []).controller("loginCtrl", loginCtrlFn );
+		} else{
+			alert("unable to load angular js");
+		}
+	}
+	*/
+	function loginCtrlFn ($scope, $http){
+		$scope.PageName = "Login";
+		$scope.uname = "";
+		$scope.upwd = "";
+		$scope.noErrMsg = true;
+		
+		$scope.login = function(){
+			$scope.noErrMsg = true;
+			//alert("HTTP " + $http);
+			$http.post(appBase.getRemoteURL("users/load"), { 'selector': UserService.newUser($scope.uname, $scope.upwd)})
+				.then(
+				function(result){
+					var users = result.data;
+					//alert(JSON.stringify(users));
+					if(users.length>0){
+						var authUser = new User().copy(users[0]);
+						//alert(authUser);
+						UserService.setActiveUser(authUser);
+						window.location = appBase.getRemoteURL("customers/home.html");
+					} else {
+						$scope.noErrMsg = false;
+						$scope.ermsg ="Invalid inputs. Try again.";
+					}
+				},
+				function (error) {
+					$scope.noErrMsg = false;
+					$scope.ermsg ="Invalid inputs. Try again.";
+			    }
+			);
+		};
+	}
+	</script>
+
+</body>
+</html>

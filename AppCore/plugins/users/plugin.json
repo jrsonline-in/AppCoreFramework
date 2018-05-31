@@ -1,0 +1,10 @@
+{
+  "name": "service.user",
+  "version": "0.0.1",
+  "description": "User Management Web Service ",
+  "author": "App Core",
+  "web-services": [
+  	{"prefix":"/users", "script":"user-web-service.js"}
+  ],
+  "web-static":["client"]
+}

@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>My Cart: Register</title>
+<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.4/angular.min.js"></script>
+<script type="text/javascript" src="app.js"></script>
+<script type="text/javascript" src="user_service.js"></script>
+</head>
+<body class="container">
+	<div ng-app="registerApp" ng-controller="registerCtrl">
+		<div ng-include="'../menubar.html'"></div>
+		<h2>Register to MyCart</h2>
+		<div style="color: red" ng-hide="noErrMsg">{{ermsg}}</div>
+		<table class="table table-striped">
+			<tr>
+				<td>User Name:</td>
+				<td><input ng-model="uname" name="uname" ng-change="hideErrMsg()"></td>
+			</tr>
+			<tr>
+				<td>Password:</td>
+				<td><input ng-model="upwd" name="upwd" type="password" ng-change="hideErrMsg()">
+				</td>
+			</tr>
+			<tr>
+				<td>&nbsp;</td>
+				<td>
+					<button ng-click="register();" class="w3-btn w3-green w3-ripple">
+						Register</button>
+				</td>
+			</tr>
+		</table>
+	</div>
+</body>
+<script type="text/javascript">
+angular.module("registerApp", []).controller("registerCtrl", registerCtrlFn );
+/*
+window.onload = window.onreadystatechange = function(){
+	if(angular){
+		angular.module("registerApp", []).controller("registerCtrl", registerCtrlFn );
+	} else{
+		alert("unable to load angular js");
+	}
+}
+*/
+
+function registerCtrlFn($scope, $http) {
+	$scope.PageName = "Register";
+	$scope.uname = "";
+	$scope.upwd = "";
+	$scope.noErrMsg = true;
+	
+	$scope.hideErrMsg = function(){
+		$scope.noErrMsg = true;
+	}
+	
+	$scope.register = function() {
+		$http.post(appBase.getRemoteURL("users/load"), { 'selector': {'uname': $scope.uname}})
+		.then(
+			function(result){
+				var users = result.data;
+				if(users.length==0){
+					var usr = UserService.newUser($scope.uname, $scope.upwd);
+					$http.post(appBase.getRemoteURL("users/save"), { 'users': [usr]})
+					.then(
+						function(result){
+							alert("added user : " + usr.toStr());
+							window.location = appBase.getRemoteURL("users/login.html");
+						},
+						function (error) {
+							alert("Problem in adding user details. Try again");
+					    }
+					);
+				} else {
+					$scope.noErrMsg = false;
+					$scope.ermsg ="This username pre-exists. Try a different name.";
+				}
+			},
+			function (error) {
+				$scope.noErrMsg = false;
+				$scope.ermsg ="Invalid inputs. Try again.";
+		    }
+		);
+	};
+}
+</script>
+</html>

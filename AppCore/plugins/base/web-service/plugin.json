@@ -1,0 +1,7 @@
+{
+  "name": "base.web-service",
+  "version": "0.0.1",
+  "description": "Base Web Service ",
+  "author": "App Core",
+  "script":"web-service.js"
+}

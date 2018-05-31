@@ -1,0 +1,7 @@
+{
+  "name": "base.db.mysql",
+  "version": "0.0.1",
+  "description": "MySQL DB ",
+  "author": "App Core",
+  "script":"mysql.js"
+}

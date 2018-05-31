@@ -1,0 +1,6 @@
+{
+	"id":"app.core.platform",
+	"name":"Application Core Platform",
+	"description":"Application Core Platform",
+	"plugins":"./plugins"
+}

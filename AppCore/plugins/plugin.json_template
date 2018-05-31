@@ -1,0 +1,10 @@
+{
+  "name": "base.db",
+  "version": "0.0.1",
+  "description": "App Core - Base - DB ",
+  "author": "App Core",
+  "web-services": [
+  	{"prefix":"basedb", "script":"base_db.js"}
+  ],
+  "web-static":[""]
+}
