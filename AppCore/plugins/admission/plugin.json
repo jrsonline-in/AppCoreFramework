@@ -1,0 +1,35 @@
+{
+  "name": "module.admission",
+  "version": "0.0.1",
+  "description": "Course Management Web Service ",
+  "author": "App Core",
+  "web-pages":[
+  	{
+  		"id":"app.admissions",
+  		"title":"Admissions",
+  		"links":[
+  			{
+  				"id":"student.admission",
+  				"title":"Student Admission",
+  				"description":"Add Student details"
+  			},
+  			{
+  				"id":"student.details",
+  				"title":"Student Details",
+  				"description":"Find Student details"
+  			}
+  		]
+  	},
+   	{
+  		"parent-id":"app.admissions",
+  		"id":"student.admission",
+  		"title":"Student Admission"
+  	},   	
+  	{
+   		"parent-id":"app.admissions",
+  		"id":"student.details",
+  		"title":"Student Details"
+  	}
+  	
+  ]
+}

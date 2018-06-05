@@ -1,0 +1,9 @@
+{
+  "name": "base.webpage-service",
+  "version": "0.0.1",
+  "description": "Base Web Page Service ",
+  "author": "App Core",
+  "web-services": [
+  	{"prefix":"/pages", "script":"page-web-service.js"}
+  ]
+}

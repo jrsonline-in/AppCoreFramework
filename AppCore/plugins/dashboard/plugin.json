@@ -1,12 +1,8 @@
 {
-  "name": "base.db",
+  "name": "module.dashboard",
   "version": "0.0.1",
-  "description": "App Core - Base - DB ",
+  "description": "App Dashboard",
   "author": "App Core",
-  "web-services": [
-  	{"prefix":"basedb", "script":"base_db.js"}
-  ],
-  "web-static":["client"],
   "web-pages":
   [
   	{

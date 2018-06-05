@@ -4,6 +4,7 @@ global.Platform = Platform;
 
 Platform.fs = require("fs");
 Platform.PATH_SEP = "/";
+Platform.PLUGIN_FILE_NAME = "plugin.json";
 Platform.registry = {};
 
 Platform.inited = false;
@@ -74,16 +75,45 @@ Platform.registerPlugins = function registerPlugins(){
 			files.forEach(function(fpath, i) {
 				findPlugin(path + Platform.PATH_SEP + fpath);
 			});
-		} else if(path.endsWith("plugin.json")) {
+		} else if(path.endsWith(Platform.PLUGIN_FILE_NAME)) {
 			var pluginConfig =JSON.parse(Platform.fs.readFileSync(path));
 			if(!pluginConfig.active){
 				pluginConfig.active = true;
 			}
-			Platform.registry.plugins.push({"name":pluginConfig.name, "path": path, "config": pluginConfig});
+			Platform.registry.plugins.push({"name":pluginConfig.name, "path": require('path').dirname(path), "config": pluginConfig});
 		}	
 	}
 }
 
+//utility: registerWebPages
+Platform.registerWebPages = function registerWebPages(){
+
+	if(!Platform.inited){
+		Platform.bootstrap();
+	}
+	
+	// if needed, init express and app
+	Platform.initExpressApp();
+	
+	// register web pages.
+	Platform.registry.pages = new Object();
+	
+	Platform.registry.plugins.forEach(function(plugin) {
+		var pages = plugin.config["web-pages"];
+		if(pages){
+			console.log("Plugin - '" + plugin.name 
+					+ "' contains pages : " + JSON.stringify(pages));
+			pages.forEach(function(page) {
+				page["basefolder"] = plugin.path;
+				// var mod = require(plugin.path + Platform.PATH_SEP + service.script);
+				// Platform.app.use(service.prefix, mod);
+				Platform.registry.pages[page.id] = page;
+				//console.log("Added page - " + JSON.stringify(Platform.registry.pages))
+			})
+		}
+	});
+	return Platform.registry.pages;
+}
 
 //utility: registerWebServices
 Platform.registerWebServices = function registerWebServices(){
@@ -100,7 +130,7 @@ Platform.registerWebServices = function registerWebServices(){
 		var services = plugin.config["web-services"];
 		if(services){
 			services.forEach(function(service) {
-				var mod = require(plugin.path + Platform.PATH_SEP + ".."+ Platform.PATH_SEP + service.script);
+				var mod = require(plugin.path + Platform.PATH_SEP + service.script);
 				Platform.app.use(service.prefix, mod);
 			})
 		}
@@ -138,7 +168,7 @@ Platform.registerStaticClients = function registerStaticClients(){
 		var statics = plugin.config["web-static"];
 		if(statics){
 			statics.forEach(function(st) {
-				var stPath = plugin.path + Platform.PATH_SEP + ".."+ Platform.PATH_SEP + st;
+				var stPath = plugin.path + Platform.PATH_SEP + st;
 				Platform.app.use(Platform.express.static(stPath));
 			})
 		}
@@ -155,7 +185,7 @@ Platform.requirePlugin= function loadPlugin(name){
 		var plugin = Platform.registry.plugins[i];
 		if(plugin.name == name){
 			if(!plugin.required){
-				var reqPath = plugin.path + Platform.PATH_SEP + ".."+ Platform.PATH_SEP + plugin.config.script;
+				var reqPath = plugin.path + Platform.PATH_SEP + plugin.config.script;
 				//console.log("Loading Plugin at - " + reqPath);
 				var pluginScript = require(reqPath);
 				//console.log("Loaded : " + pluginScript);

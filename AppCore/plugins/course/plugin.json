@@ -1,0 +1,24 @@
+{
+  "name": "module.course",
+  "version": "0.0.1",
+  "description": "Course Management Web Service ",
+  "author": "App Core",
+  "web-pages":[
+  	{
+  		"id":"app.configuration",
+  		"title":"Configuration",
+  		"links":[
+  			{
+  				"id":"course.home",
+  				"title":"Manage Course/Batch",
+  				"description":"Add a new course or batch for this academic year"
+  			}
+  		]
+  	},
+  	{
+  		"id":"course.home",
+  		"title":"Course",
+  		"parent-id":"app.configuration"
+  	}
+  ]
+}
