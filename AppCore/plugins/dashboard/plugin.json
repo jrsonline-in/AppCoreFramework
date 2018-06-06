@@ -7,19 +7,8 @@
   [
   	{
   		"id":"dashboard",
-  		"title":"Dashboard",
-  		"links":[
-  			{
-  				"id":"app.configuration",
-  				"title":"Application Configurations",
-  				"description":"Set/Modify application configurations"
-  			},
-  			{
-  				"id":"app.admissions",
-  				"title":"Admissions",
-  				"description":"Manage Admissions"
-  			}
-  		]
+  		"title":"Home",
+  		"description":"The Application Dashboard"
   	} 
   ]
 }

@@ -1,0 +1,16 @@
+{
+  "name": "module.student",
+  "version": "0.0.1",
+  "description": "Student Management",
+  "author": "App Core",
+  "web-pages":[
+  	{
+  		"id":"student",
+  		"title":"Students",
+  		"description":"Find Student details",
+  		"parent":"dashboard",
+  		"templateUrl":"student_search.html"
+  	}
+  	
+  ]
+}

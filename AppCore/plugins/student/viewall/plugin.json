@@ -1,0 +1,14 @@
+{
+  "name": "student.viewall",
+  "version": "0.0.1",
+  "description": "Student: View All",
+  "author": "App Core",
+  "web-pages":[
+  	{
+  		"id":"student.viewall",
+  		"title":"View All",
+  		"description":"List students of a batch",
+  		"parent":"student"
+  	}
+  ]
+}

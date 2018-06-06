@@ -1,0 +1,15 @@
+{
+  "name": "student.admission",
+  "version": "0.0.1",
+  "description": "Student Admission ",
+  "author": "App Core",
+  "web-pages":[
+   	{
+  		"id":"student.admission",
+  		"title":"Student Admission",
+  		"description":"Add Student details",
+  		"parent":"student",
+  		"templateUrl":"student_admission.html"
+  	}  	
+  ]
+}

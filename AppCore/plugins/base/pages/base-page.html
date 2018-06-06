@@ -1,48 +1,51 @@
 <!DOCTYPE html>
-<html ng-app="app" ng-controller="ctrl">
+<html ng-app="app" ng-controller="baseCtrl">
 <head>
-	<title>{{title}}</title>
+	<title>{{page.title}}</title>
 	<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.4/angular.min.js"></script>
 	<script type="text/javascript" src="../app.js"></script>
+
+	<script type="text/javascript">
+		var app = angular.module("app", []);
+		
+		app.controller("baseCtrl", 
+			function baseCtrlFn ($scope, $http){
+				$scope.page = __page__;
+				$scope.title = "__page.title__";
+				var links = __links__;
+				if(links && links.length > 0){
+					$scope.links = links;
+				}
+				$scope.parents = __parents__;
+			} 
+		);
+	</script>
+
 </head>
 <body class="container">
 	<div>
 		<div ng-include="'../menubar.html'"></div>
 		<h3>{{title}}</h3>
 		<br>
-		<div><!-- Bred crumb -->
+		<!-- Bred crumb -->
+		<div>
 			<span ng-repeat="link in parents">
-				<a href="/pages/{{link['id']}}">{{link.title}}</a> &gt; 
+				<span ng-hide="$last"><a href="/pages/{{link['id']}}">{{link.title}}</a> &gt; </span>
+				<span ng-show="$last">{{link.title}}</span>
 			</span>
 		</div>
 		<hr>
+		<!-- description -->
+		<p>{{page.description}}</p>
+		<!-- children link sections -->
 		<div class="row">
 			<div ng-repeat="link in links" class="col-sm-6">
 				<a href="/pages/{{link['id']}}">{{link.title}}</a><br>
 				<span>{{link.description}}</span>
 			</div>
 		</div>
+		<!-- Page content -->
+		__page.content__
 	</div>
-	<script type="text/javascript">
-	angular.module("app", []).controller("ctrl", ctrlFn );
-	/*
-	window.onload = window.onreadystatechange = function(){
-		if(angular){
-			angular.module("app", []).controller("ctrl", ctrlFn );
-		} else{
-			alert("unable to load angular js");
-		}
-	}
-	*/
-	function ctrlFn ($scope, $http){
-		$scope.title = "__page.title__";
-		var links = __links__;
-		if(links && links.length > 0){
-			$scope.links = links;
-		}
-		$scope.parents = __parents__;
-	}
-	</script>
-
 </body>
 </html>

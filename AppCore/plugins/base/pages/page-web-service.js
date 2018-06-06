@@ -10,33 +10,44 @@ Platform.registerWebPages();
 // load page
 router.get('/*', loadPage);
 
+var subs_page = "__page__";
 var subs_page_title = "__page.title__";
 var subs_links = "__links__";
 var subs_parents = "__parents__";
-
-var parent_home = {"id":"dashboard", "title":"Home", "description":"Home"};
+var subs_page_content = "__page.content__";
 
 function loadPage (req, res){
 	var pages = Platform.registry.pages;
-	console.log("Pages : " + JSON.stringify(pages));
+	//console.log("Pages : " + JSON.stringify(pages));
 	var pageId = req.path.substr(1);
 	console.log("loading Page - " + pageId);
 	if(Object.keys(pages).indexOf(pageId) >= 0){
+		var fs = require("fs");
 		var page = pages[pageId];
-		//httpBase.setHeader(res);
-		var basePageContent = require("fs").readFileSync(__dirname + "/base-page.html").toString("utf8");
+		// load base page template
+		var basePageContent = fs.readFileSync(__dirname + "/base-page.html").toString("utf8");
+		// set page
+		basePageContent = basePageContent.replace(new RegExp(subs_page, "g"), JSON.stringify(page));
+		// set page title
 		basePageContent = basePageContent.replace(new RegExp(subs_page_title, "g"), page.title);
-		if(page.links){
-			basePageContent = basePageContent.replace(new RegExp(subs_links, "g"), JSON.stringify(page.links));
-		} else {
-			basePageContent = basePageContent.replace(new RegExp(subs_links, "g"), "[]");
-		}
-		
-		var parents = [parent_home];
+		// build children links
+		var links = findChildrenLinks(page);
+		basePageContent = basePageContent.replace(new RegExp(subs_links, "g"), JSON.stringify(links));
+		// build breadcrumb
+		var parents = []; 
 		buildParents(page, parents);
-		console.log("Parent trail : " + JSON.stringify(parents));
 		basePageContent = basePageContent.replace(new RegExp(subs_parents, "g"), JSON.stringify(parents));
-		
+		// build template content
+		if(page.template){
+			basePageContent = basePageContent.replace(new RegExp(subs_page_content, "g"), page.template);
+		} else if(page.templateUrl){
+			var plugin = Platform.getPluginDefinition(page.pluginName);
+			var templateContent = fs.readFileSync(plugin.path + Platform.PATH_SEP + page.templateUrl).toString("utf8");
+			basePageContent = basePageContent.replace(new RegExp(subs_page_content, "g"), templateContent);
+		} else {
+			basePageContent = basePageContent.replace(new RegExp(subs_page_content, "g"), "");
+		}
+		// send back as response.
 		res.write(basePageContent);
 	} else {
 		res.write(pageId + " : Not found");
@@ -45,13 +56,27 @@ function loadPage (req, res){
 	res.end();
 }
 
+function findChildrenLinks(page){
+	var linkPages = [];
+	var pages = Platform.registry.pages;
+	Object.keys(pages).forEach(function(id, i) {
+		var p = pages[id];
+		if(p.parent && p.parent == page.id){
+			linkPages.push(p);
+			//console.log("Found child - " + JSON.stringify(p));
+		}
+	});
+	
+	return linkPages;
+}
+
 function buildParents(page, parents){
 	if(!parents){
 		parents = [];
 	}
-	parents.splice(1, 0, page);
+	parents.splice(0, 0, page);
 	var pages = Platform.registry.pages;
-	var parentPageId = page["parent-id"];
+	var parentPageId = page.parent;
 	if(parentPageId && Object.keys(pages).indexOf(parentPageId) >= 0){
 		var parentPage = pages[parentPageId];
 		buildParents(parentPage, parents);

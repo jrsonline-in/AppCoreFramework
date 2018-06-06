@@ -1,0 +1,17 @@
+<hr><br>
+<div ng-controller="studentSearch">
+	<b>Search</b> <input ng-change="search()" ng-model="student"> 
+	<input type="radio" name="st_type" value=""> Present students
+	<input type="radio" name="st_type" value=""> Former students
+	<br>
+	{{st}}
+</div>
+<script>
+app.controller("studentSearch", 
+	function studentSearchFn($scope){
+		$scope.search = function search(){
+			$scope.st = $scope.student;
+		}
+	}
+);
+</script>

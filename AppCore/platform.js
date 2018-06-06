@@ -58,6 +58,7 @@ Platform.registerPlugins = function registerPlugins(){
 	console.log("registering plugins...");
 	// init : plugin registry
 	Platform.registry.plugins = [];
+	Platform.registry.disabledPlugins = [];
 	// identify plugins root folder
 	if(Platform.config.plugins){
 		Platform.pluginsFolder = Platform.root() + Platform.PATH_SEP + Platform.config.plugins;
@@ -77,10 +78,11 @@ Platform.registerPlugins = function registerPlugins(){
 			});
 		} else if(path.endsWith(Platform.PLUGIN_FILE_NAME)) {
 			var pluginConfig =JSON.parse(Platform.fs.readFileSync(path));
-			if(!pluginConfig.active){
-				pluginConfig.active = true;
+			if(pluginConfig.disabled){
+				Platform.registry.disabledPlugins.push({"name":pluginConfig.name, "path": require('path').dirname(path), "config": pluginConfig});
+			} else {
+				Platform.registry.plugins.push({"name":pluginConfig.name, "path": require('path').dirname(path), "config": pluginConfig});
 			}
-			Platform.registry.plugins.push({"name":pluginConfig.name, "path": require('path').dirname(path), "config": pluginConfig});
 		}	
 	}
 }
@@ -101,12 +103,9 @@ Platform.registerWebPages = function registerWebPages(){
 	Platform.registry.plugins.forEach(function(plugin) {
 		var pages = plugin.config["web-pages"];
 		if(pages){
-			console.log("Plugin - '" + plugin.name 
-					+ "' contains pages : " + JSON.stringify(pages));
+			//console.log("Plugin - '" + plugin.name + "' contains pages : " + JSON.stringify(pages));
 			pages.forEach(function(page) {
-				page["basefolder"] = plugin.path;
-				// var mod = require(plugin.path + Platform.PATH_SEP + service.script);
-				// Platform.app.use(service.prefix, mod);
+				page.pluginName = plugin.name;
 				Platform.registry.pages[page.id] = page;
 				//console.log("Added page - " + JSON.stringify(Platform.registry.pages))
 			})
@@ -192,6 +191,20 @@ Platform.requirePlugin= function loadPlugin(name){
 				plugin.required = pluginScript;
 			}
 			return plugin.required;
+		}
+	}
+}
+
+//utility: getPluginDefinition
+Platform.getPluginDefinition= function getPluginDefinition(name){
+	if(!Platform.inited){
+		Platform.bootstrap();
+	}
+	
+	for(var i=0; i<Platform.registry.plugins.length; i++){
+		var plugin = Platform.registry.plugins[i];
+		if(plugin.name == name){
+			return plugin;
 		}
 	}
 }

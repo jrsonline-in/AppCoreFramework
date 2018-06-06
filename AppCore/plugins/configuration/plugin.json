@@ -1,0 +1,15 @@
+{
+  "name": "module.configuration",
+  "version": "0.0.1",
+  "description": "App Configuration",
+  "author": "App Core",
+  "web-pages":
+  [
+	{
+		"id":"app.configuration",
+		"title":"Application Configurations",
+		"description":"Set/Modify application configurations",
+   		"parent":"dashboard"
+	} 
+  ]
+}
