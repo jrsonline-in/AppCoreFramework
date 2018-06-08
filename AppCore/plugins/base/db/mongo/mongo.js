@@ -10,13 +10,13 @@ module.exports.findDocuments = function (collection, selector, options, callback
 	MongoClient.connect(url, function(err, client) {
 		if (err) throw err;
 		var db = client.db(dbname);
-		console.log("Database created!");
 		var coll = db.collection(collection);
+		console.log("Find On collection: [" + collection  + "] :: Selector : '" + JSON.stringify(selector) + "' :: Options : '" + JSON.stringify(options) + "'");
 		coll.find(selector, options).toArray(function(err, res){
 			if(err){
 				console.log("Error in find.");
 			}
-			console.log("found: " + res);
+			console.log("found on collection: [" + collection  + "]: " + JSON.stringify(res));
 			client.close();
 			// callback the listener
 			if(callback){

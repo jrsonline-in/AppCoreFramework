@@ -12,11 +12,22 @@ function load (req, res){
 	console.log("loading student-batches...");
 	httpBase.setHeader(res);
 	var selector = {};
-	if(req.body && req.body.selector){
-		selector = req.body.selector;
-		console.log("Selector: " + JSON.stringify(selector));
+	var options = {};
+	if(req.body){
+		console.log(JSON.stringify(req.body));
+		
+		if(req.body.selector){
+			selector = req.body.selector;
+			console.log("Selector: " + JSON.stringify(selector));
+		}
+		
+		if(req.body.options){
+			options = req.body.options;
+			console.log("Options: " + JSON.stringify(options));
+		}
 	}
-	SB_DB.getStudentBatches(selector, {}, function(result){
+
+	SB_DB.getStudentBatches(selector, options, function(result){
 		console.log("sending " + result);
 		res.send(result); //send the response
 	});

@@ -16,7 +16,14 @@ function load (req, res){
 		selector = req.body.selector;
 		console.log("Selector: " + JSON.stringify(selector));
 	}
-	studentDB.getStudents(selector, {}, function(result){
+
+	var options = {};
+	if(req.body && req.body.options){
+		options = req.body.options;
+		console.log("Options: " + JSON.stringify(options));
+	}
+
+	studentDB.getStudents(selector, options, function(result){
 		console.log("sending " + result);
 		res.send(result); //send the response
 	});

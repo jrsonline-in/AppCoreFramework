@@ -2,14 +2,9 @@
 	<h3>Batch : {{batch.name}}</h3>
 	<div> <!-- general details -->
 		<table class="table">
-			<!-- 
 			<tr>
-				<td>Select Course:</td>
-				<td>
-					<select ng-model="course" ng-options="c.name for c in courses" required="required"></select> {{course.description}}
-				</td>
+				<td>Course:</td><td>{{batch.course}}</td>
 			</tr>
-			 -->
 			<tr>
 				<td>Batch Name:</td><td><span ng-show="editing"><input ng-model="batch.name"></span><span ng-hide="editing">{{batch.name}}</span></td>
 			</tr>
@@ -26,16 +21,18 @@
 	</div> 
 	<div> <!-- student details -->
 		<h3>Student List</h3>
-		<table class="table" ng-show="sbs && sbs.length>0">
+		<table class="table" ng-show="students && students.length>0">
 			<tr>
-				<th>Student ID</th>
+				<th>ID</th>
+				<th>Name</th>
 			</tr>
-			<tr ng-repeat="b in sbs">
-				<td><a ng-click="viewStudent(b)" title="Click to view details." style="cursor: pointer;">{{b.studentId}}</a></td>
+			<tr ng-repeat="b in students">
+				<td>{{b._id}}</td>
+				<td><a ng-click="viewStudent(b)" title="Click to view details." style="cursor: pointer;">{{b.name}}</a></td>
 			</tr>
 		</table>
 		<span> Add a student : 
-			<select ng-model="student" ng-options="s.name for s in students" required="required"></select>
+			<select ng-model="student" ng-options="s.name for s in allStudents" required="required"></select>
 			<button ng-click="addStudent()"> Add</button>
 		</span>
 	</div>
@@ -111,13 +108,32 @@ app.controller("viewBatchCtrl", function viewBatchCtrl($scope, $http){
 	
 	function loadStudentBatches(bId){
 		// load batch batch details
-		$http.post(appBase.getRemoteURL("sb/load"), { 'selector': {'batchId':bId}})
+		$http.post(appBase.getRemoteURL("sb/load"), {'selector': {'batchId':bId}})
 		.then(
 			function(result){
 				//alert(JSON.stringify(result));
 				if(result.data){
-					$scope.sbs = result.data;
-					//alert(JSON.stringify($scope.sbs));
+					var studentIds = [];
+					result.data.forEach(function(sb, i) {
+						studentIds.push(sb.studentId);
+					});
+					
+					$http.post(appBase.getRemoteURL("student/load"), {'selector': {'_id':{'$in':studentIds}}})
+					.then(
+						function(result){
+							//alert(JSON.stringify(result));
+							if(result.data){
+								$scope.students = result.data;
+								//alert(JSON.stringify($scope.sbs));
+							} else {
+								alert("No student-batch details found.")
+							}
+						},
+						function (error) {
+							alert("Problem in getting student-batch listing. Try again");
+					    }
+					);
+
 				} else {
 					alert("No student-batch details found.")
 				}
@@ -135,7 +151,7 @@ app.controller("viewBatchCtrl", function viewBatchCtrl($scope, $http){
 		.then(
 			function(result){
 				//alert(JSON.stringify(result));
-				$scope.students = result.data;
+				$scope.allStudents = result.data;
 			},
 			function (error) {
 				alert("Problem in loading student list.");
@@ -143,8 +159,8 @@ app.controller("viewBatchCtrl", function viewBatchCtrl($scope, $http){
 		);
 	}
 	// view action
-	$scope.viewStudent = function viewStudent(sb){
-		window.location = appBase.getRemoteURL("pages/student.view?id=" + sb.studentId);
+	$scope.viewStudent = function viewStudent(student){
+		window.location = appBase.getRemoteURL("pages/student.view?id=" + student._id);
 	}
 });
 </script>
