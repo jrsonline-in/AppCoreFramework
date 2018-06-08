@@ -66,7 +66,19 @@ function findChildrenLinks(page){
 	Object.keys(pages).forEach(function(id, i) {
 		var p = pages[id];
 		if(p.parent && p.parent == page.id){
-			linkPages.push(p);
+			var linkIndex = 0;
+			if(p.listIndex){
+				linkIndex = p.listIndex;
+			}
+			if(linkIndex >= 0){
+				if(linkIndex == 0){
+					linkPages.push(p);
+				} else if(linkIndex <= linkPages.length){
+					linkPages.splice((linkIndex-1), 0, p);
+				} else {
+					linkPages.push(p);
+				}
+			}
 			//console.log("Found child - " + JSON.stringify(p));
 		}
 	});

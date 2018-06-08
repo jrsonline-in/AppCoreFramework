@@ -1,10 +1,17 @@
 <div ng-controller="newBatchCtrl">
 	<h3>New Batch</h3>
 	<table class="table">
-		<tr>
+		<tr ng-show="courses && courses.length > 0">
 			<td>Select Course:</td>
 			<td>
 				<select ng-model="course" ng-options="c.name for c in courses" required="required"></select> {{course.description}}
+				<span ng-show="courseId">{{courseId}}</span>
+			</td>
+		</tr>
+		<tr ng-show="courseId">
+			<td>Course:</td>
+			<td>
+				{{courseId}}
 			</td>
 		</tr>
 		<tr>
@@ -20,27 +27,44 @@
 </div>
 <script>
 app.controller("newBatchCtrl", function newBatchCtrl($scope, $http){
-	$scope.courses = [];
+	function init(){
+		var urlParams = new URLSearchParams(window.location.search);
+		if(urlParams){
+			var courseId = urlParams.get("course");
+			if(courseId){
+				$scope.courseId = courseId;
+			} else {
+				// load courses
+				$http.post(appBase.getRemoteURL("course/load"), {})
+				.then(
+					function(result){
+						$scope.courses = result.data;
+					},
+					function (error) {
+						alert("Problem in loading list of courses.");
+				    }
+				);
+			}
+		} else {
+			return;
+		}
+	}
 	
-	// load courses
-	$http.post(appBase.getRemoteURL("course/load"), {})
-	.then(
-		function(result){
-			$scope.courses = result.data;
-		},
-		function (error) {
-			alert("Problem in loading list of courses.");
-	    }
-	);
+	// initialize
+	init();
 	
 	// save batch
 	$scope.saveBatch = function saveBatch(){
 		var batch = $scope.batch;
-		if(!$scope.course){
+		if(!$scope.course && !$scope.courseId){
 			alert("Please select a course.");
 			return;
 		}
-		batch.course = $scope.course.name;
+		if($scope.course){
+			batch.course = $scope.course.name;
+		} else if($scope.courseId){
+			batch.course = $scope.courseId;
+		}
 		batch._id = batch.name;
 		
 		alert("Save Batch : " + JSON.stringify(batch));
@@ -48,7 +72,7 @@ app.controller("newBatchCtrl", function newBatchCtrl($scope, $http){
 		.then(
 			function(result){
 				alert("added batch : " + JSON.stringify(batch));
-				window.location = appBase.getRemoteURL("pages/batch.list");
+				window.location = appBase.getRemoteURL("pages/batch.view?id=" + batch._id);
 			},
 			function (error) {
 				alert("Problem in adding batch details. Try again");

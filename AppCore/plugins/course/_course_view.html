@@ -1,0 +1,101 @@
+<div ng-controller="viewCourseCtrl">
+	<h3>Course : {{course.name}}</h3>
+	<div> <!-- general details -->
+		<table class="table">
+			<tr>
+				<td>Course Name:</td><td><span ng-show="editing"><input ng-model="course.name"></span><span ng-hide="editing">{{course.name}}</span></td>
+			</tr>
+			<tr>
+				<td>Course Description:</td><td><span ng-show="editing"><input ng-model="course.description"></span><span ng-hide="editing">{{course.description}}</span></td>
+			</tr>
+			<tr ng-hide="editing">
+				<td colspan="2"><button ng-click="editCourse()">Edit</button></td>
+			</tr>
+			<tr ng-show="editing">
+				<td><button ng-click="cancel()">Cancel</button><td><button ng-click="saveCourse()">Save</button><button ng-click="editCourse()">Edit</button></td>
+			</tr>
+		</table>
+	</div> 
+	<div> <!-- batch details -->
+		<h3>Batch List</h3> 
+		<table class="table" ng-show="batches && batches.length>0">
+			<tr>
+				<th>Batch Name</th>
+			</tr>
+			<tr ng-repeat="b in batches">
+				<td><a ng-click="viewBatch(b)" title="Click to view details." style="cursor: pointer;">{{b.name}}</a></td>
+			</tr>
+		</table>
+		<button ng-click="createNewBatch()">Create New</button>
+	</div>
+</div>
+
+<script>
+app.controller("viewCourseCtrl", function viewCourseCtrl($scope, $http){
+	var courseId = null;
+
+	// load course
+	function load(id){
+		if(!id){
+			//alert(window.location.search);
+			var urlParams = new URLSearchParams(window.location.search);
+			if(urlParams){
+				id = urlParams.get("id");
+			} else {
+				return;
+			}
+		}
+		
+		// load course details
+		$http.post(appBase.getRemoteURL("course/load"), { 'selector': {'_id':id}})
+		.then(
+			function(result){
+				//alert(JSON.stringify(result));
+				if(result.data && result.data.length >0){
+					$scope.course = result.data[0];
+				} else {
+					alert("Course details not found")
+				}
+			},
+			function (error) {
+				alert("Problem in getting course listing. Try again");
+		    }
+		);
+		
+		// load batches
+		loadBatches(id);
+	}
+	
+	// call 
+	load();
+	
+	function loadBatches(cId){
+		// load batch details for the course
+		$http.post(appBase.getRemoteURL("batch/load"), { 'selector': {'course':cId}})
+		.then(
+			function(result){
+				//alert(JSON.stringify(result));
+				if(result.data){
+					$scope.batches = result.data;
+					//alert(JSON.stringify($scope.sbs));
+				} else {
+					alert("No batches found.")
+				}
+			},
+			function (error) {
+				alert("Problem in getting batch listing. Try again");
+		    }
+		);
+	}
+	
+	// view action
+	$scope.viewBatch = function viewBatch(batch){
+		window.location = appBase.getRemoteURL("pages/batch.view?id=" + batch._id);
+	}
+	
+	$scope.createNewBatch = function createNewBatch(){
+		window.location = appBase.getRemoteURL("pages/batch.new?course=" + $scope.course.name);
+	}
+	
+});
+</script>

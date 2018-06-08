@@ -3,12 +3,13 @@
   "version": "0.0.1",
   "description": "Student Management",
   "author": "App Core",
-  "web-pages":[
+  "webPages":[
   	{
   		"id":"student",
   		"title":"Students",
   		"description":"Students",
   		"parent":"dashboard",
+  		"listIndex": 1,
   		"templateUrl":"_student_search.html"
   	},
   	{
@@ -28,6 +29,9 @@
   	{
   		"id":"student.view",
   		"title":"Student View",
+  		"description":"View Student ",
+  		"parent":"student",
+  		"listIndex": -1,
   		"templateUrl":"_student_view.html"
   	}  	
   ],

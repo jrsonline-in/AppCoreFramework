@@ -31,7 +31,7 @@
 				<th>Batch Name</th>
 			</tr>
 			<tr ng-repeat="b in sbs">
-				<td>{{b.batchId}}</td>
+				<td><a ng-click="viewBatch(b)" title="Click to view details." style="cursor: pointer;">{{b.batchId}}</a> </td>
 			</tr>
 		</table>
 		<span> Add to batch : 
@@ -142,6 +142,11 @@ app.controller("viewStudentCtrl", function viewStudentCtrl($scope, $http){
 		    }
 		);
 		
+	}
+	
+	// view batch action
+	$scope.viewBatch = function viewBatch(sb){
+		window.location = appBase.getRemoteURL("pages/batch.view?id=" + sb.batchId);
 	}
 });
 </script>

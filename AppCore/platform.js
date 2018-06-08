@@ -105,7 +105,7 @@ Platform.registerWebPages = function registerWebPages(){
 	Platform.registry.pages = new Object();
 	
 	Platform.registry.plugins.forEach(function(plugin) {
-		var pages = plugin.config["web-pages"];
+		var pages = plugin.config["webPages"];
 		if(pages){
 			//console.log("Plugin - '" + plugin.name + "' contains pages : " + JSON.stringify(pages));
 			pages.forEach(function(page) {

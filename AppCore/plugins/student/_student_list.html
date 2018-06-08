@@ -1,21 +1,30 @@
 <div ng-controller="listStudentCtrl">
 	<h3>Student List</h3>
-	<table class="table">
-		<tr>
-			<!-- <th>Course Name</th> --> <th>Student Name</th> <!-- <th>Student Description</th> -->
-		</tr>
-		<tr ng-repeat="student in students">
-			<!-- <td>{{student.course}}</td> -->
-			<td><a ng-click="viewStudent(student)" title="Click to view details." style="cursor: pointer;">{{student.name}}</a></td>
-			<!-- <td>{{student.description}}</td> -->
-		</tr>
-	</table>
+	<b>Search</b> <input ng-model="stName" ng-change="search()">
+	<div ng-show="students && students.length>0">
+		<table class="table">
+			<tr>
+				<th>Student ID</th> <th>Student Name</th> <!-- <th>Student Description</th> -->
+			</tr>
+			<tr ng-repeat="student in students">
+				<td>{{student._id}}</td>
+				<td><a ng-click="viewStudent(student)" title="Click to view details." style="cursor: pointer;">{{student.name}}</a></td>
+				<!-- <td>{{student.description}}</td> -->
+			</tr>
+		</table>
+	</div>
 </div>
 <script>
 app.controller("listStudentCtrl", function listStudentCtrl($scope, $http){
-	function load(){
-		//alert("loading student list");
-		$http.post(appBase.getRemoteURL("student/load"), { 'selector': {}})
+	$scope.search = function search(){
+		//alert("search");
+		if(!$scope.stName || $scope.stName.trim().length == 0){
+			$scope.students = [];
+			return;
+		}
+		var condition = { 'selector': {'name':{$regex: $scope.stName, $options: "i"}}};
+		//alert("condition : " + JSON.stringify(condition));
+		$http.post(appBase.getRemoteURL("student/load"), condition)
 		.then(
 			function(result){
 				//alert(JSON.stringify(result));
@@ -25,14 +34,12 @@ app.controller("listStudentCtrl", function listStudentCtrl($scope, $http){
 				alert("Problem in getting student listing. Try again");
 		    }
 		);
-		
 	}
-	// load list.
-	load();
-	
-	// view action
+
+	// view student action
 	$scope.viewStudent = function viewStudent(st){
 		window.location = appBase.getRemoteURL("pages/student.view?id=" + st._id);
 	}
+
 });
 </script>

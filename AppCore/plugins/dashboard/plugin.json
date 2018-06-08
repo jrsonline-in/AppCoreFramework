@@ -3,7 +3,7 @@
   "version": "0.0.1",
   "description": "App Dashboard",
   "author": "App Core",
-  "web-pages":
+  "webPages":
   [
   	{
   		"id":"dashboard",

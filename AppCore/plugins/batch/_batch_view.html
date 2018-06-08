@@ -1,0 +1,150 @@
+<div ng-controller="viewBatchCtrl">
+	<h3>Batch : {{batch.name}}</h3>
+	<div> <!-- general details -->
+		<table class="table">
+			<!-- 
+			<tr>
+				<td>Select Course:</td>
+				<td>
+					<select ng-model="course" ng-options="c.name for c in courses" required="required"></select> {{course.description}}
+				</td>
+			</tr>
+			 -->
+			<tr>
+				<td>Batch Name:</td><td><span ng-show="editing"><input ng-model="batch.name"></span><span ng-hide="editing">{{batch.name}}</span></td>
+			</tr>
+			<tr>
+				<td>Batch Description:</td><td><span ng-show="editing"><input ng-model="batch.description"></span><span ng-hide="editing">{{batch.description}}</span></td>
+			</tr>
+			<tr ng-hide="editing">
+				<td colspan="2"><button ng-click="editBatch()">Edit</button></td>
+			</tr>
+			<tr ng-show="editing">
+				<td><button ng-click="cancel()">Cancel</button><td><button ng-click="saveBatch()">Save</button><button ng-click="editBatch()">Edit</button></td>
+			</tr>
+		</table>
+	</div> 
+	<div> <!-- student details -->
+		<h3>Student List</h3>
+		<table class="table" ng-show="sbs && sbs.length>0">
+			<tr>
+				<th>Student ID</th>
+			</tr>
+			<tr ng-repeat="b in sbs">
+				<td><a ng-click="viewStudent(b)" title="Click to view details." style="cursor: pointer;">{{b.studentId}}</a></td>
+			</tr>
+		</table>
+		<span> Add a student : 
+			<select ng-model="student" ng-options="s.name for s in students" required="required"></select>
+			<button ng-click="addStudent()"> Add</button>
+		</span>
+	</div>
+</div>
+
+<script>
+app.controller("viewBatchCtrl", function viewBatchCtrl($scope, $http){
+	var batchId = null;
+	
+	$scope.addStudent = function addStudent(){
+		var batch = $scope.batch;
+		var student = $scope.student;
+		$http.post(appBase.getRemoteURL("sb/load"), { 'selector': {'batchId':batch._id, 'studentId':student._id}})
+		.then(
+			function(result){
+				//alert(JSON.stringify(result));
+				if(result.data && result.data.length >0){
+					alert("The batch is already including selected student. Try adding a different student.");
+				} else {
+					$http.post(appBase.getRemoteURL("sb/save"), { 'sbs': [{'batchId':batch._id, 'studentId':student._id}]})
+					.then(
+						function(result){
+							loadStudentBatches(batch._id);
+						},
+						function (error) {
+							alert("Problem in saving batch-batch mapping. Try again");
+					    }
+					);
+				}
+			},
+			function (error) {
+				alert("Problem in getting batch-batch listing. Try again");
+		    }
+		);
+	}
+	// load batch
+	function load(id){
+		if(!id){
+			//alert(window.location.search);
+			var urlParams = new URLSearchParams(window.location.search);
+			if(urlParams){
+				id = urlParams.get("id");
+			} else {
+				return;
+			}
+		}
+		
+		// load batch details
+		$http.post(appBase.getRemoteURL("batch/load"), { 'selector': {'_id':id}})
+		.then(
+			function(result){
+				//alert(JSON.stringify(result));
+				if(result.data && result.data.length >0){
+					$scope.batch = result.data[0];
+				} else {
+					alert("Batch details not found")
+				}
+			},
+			function (error) {
+				alert("Problem in getting batch listing. Try again");
+		    }
+		);
+		
+		// load batches
+		loadStudentBatches(id);
+		
+		// load all students.
+		loadAllStudents();
+	}
+	
+	// call 
+	load();
+	
+	function loadStudentBatches(bId){
+		// load batch batch details
+		$http.post(appBase.getRemoteURL("sb/load"), { 'selector': {'batchId':bId}})
+		.then(
+			function(result){
+				//alert(JSON.stringify(result));
+				if(result.data){
+					$scope.sbs = result.data;
+					//alert(JSON.stringify($scope.sbs));
+				} else {
+					alert("No student-batch details found.")
+				}
+			},
+			function (error) {
+				alert("Problem in getting student-batch listing. Try again");
+		    }
+		);
+	}
+	
+	// load all batches.
+	function loadAllStudents(){
+		//alert("loading batch list");
+		$http.post(appBase.getRemoteURL("student/load"), { 'selector': {}})
+		.then(
+			function(result){
+				//alert(JSON.stringify(result));
+				$scope.students = result.data;
+			},
+			function (error) {
+				alert("Problem in loading student list.");
+		    }
+		);
+	}
+	// view action
+	$scope.viewStudent = function viewStudent(sb){
+		window.location = appBase.getRemoteURL("pages/student.view?id=" + sb.studentId);
+	}
+});
+</script>

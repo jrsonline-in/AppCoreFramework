@@ -1,33 +1,78 @@
 <div ng-controller="listBatchCtrl">
 	<h3>Batch List</h3>
-	<table class="table">
-		<tr>
-			<th>Course Name</th> <th>Batch Name</th> <th>Batch Description</th>
-		</tr>
-		<tr ng-repeat="b in batches">
-			<td>{{b.course}}</td>
-			<td>{{b.name}}</td>
-			<td>{{b.description}}</td>
-		</tr>
-	</table>
+	<span> Search: </span><b>by Batch Name</b> <input ng-model="batchName" ng-change="searchByBatch()">
+	<b>by Course Name</b> <input ng-model="courseName" ng-change="searchByCourse()">
+	<div ng-show="batches && batches.length>0">
+		<table class="table">
+			<tr>
+				<th>Course Name</th> <th>Batch Name</th> <th>Batch Description</th>
+			</tr>
+			<tr ng-repeat="b in batches">
+				<td>{{b.course}}</td>
+				<td><a ng-click="viewBatch(b)" title="Click to view details." style="cursor: pointer;">{{b.name}}</a> </td>
+				<td>{{b.description}}</td>
+			</tr>
+		</table>
+	</div>
 </div>
 <script>
 app.controller("listBatchCtrl", function listBatchCtrl($scope, $http){
-	$scope.load = function load(){
-		//alert("loading batch list");
-		$http.post(appBase.getRemoteURL("batch/load"), { 'selector': {}})
+	
+	function cannotSearch(){
+		if((!$scope.courseName || $scope.courseName.trim().length == 0)
+				&& (!$scope.batchName || $scope.batchName.trim().length == 0)){
+			$scope.batches = [];
+			return true;
+		}
+		return false;
+	}
+	$scope.searchByBatch = function searchByBatch(){
+		if(cannotSearch()){
+			return;
+		} else {
+			$scope.courseName = "";
+		}
+		
+		var condition = { 'selector': {'name':{$regex: $scope.batchName, $options: "i"}}};
+		//alert("condition : " + JSON.stringify(condition));
+		$http.post(appBase.getRemoteURL("batch/load"), condition)
 		.then(
 			function(result){
 				//alert(JSON.stringify(result));
 				$scope.batches = result.data;
 			},
 			function (error) {
-				alert("Problem in adding batch details. Try again");
+				alert("Problem in getting student listing. Try again");
 		    }
 		);
+	}
+
+	$scope.searchByCourse = function searchByCourse(){
+		if(cannotSearch()){
+			return;
+		} else {
+			$scope.batchName = "";
+		}
 		
+		//alert("search");
+		var condition = { 'selector': {'course':{$regex: $scope.courseName, $options: "i"}}};
+		//alert("condition : " + JSON.stringify(condition));
+		$http.post(appBase.getRemoteURL("batch/load"), condition)
+		.then(
+			function(result){
+				//alert(JSON.stringify(result));
+				$scope.batches = result.data;
+			},
+			function (error) {
+				alert("Problem in getting student listing. Try again");
+		    }
+		);
 	}
 	
-	$scope.load();
+	
+	// view action
+	$scope.viewBatch = function viewBatch(batch){
+		window.location = appBase.getRemoteURL("pages/batch.view?id=" + batch._id);
+	}
 });
 </script>

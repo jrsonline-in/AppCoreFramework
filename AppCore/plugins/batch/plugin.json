@@ -3,7 +3,7 @@
   "version": "0.0.1",
   "description": "Batch Management",
   "author": "App Core",
-  "web-pages":[
+  "webPages":[
    	{
   		"id":"batch.new",
   		"title":"Add Batch",
@@ -17,6 +17,13 @@
   		"description":"List of batches.",
   		"parent":"course.home",
   		"templateUrl":"_batch_list.html"
+  	},
+   	{
+  		"id":"batch.view",
+  		"title":"View Batch",
+   		"parent":"course.home",
+   		"listIndex":-1,
+  		"templateUrl":"_batch_view.html"
   	}
   ],
   "web-services": [

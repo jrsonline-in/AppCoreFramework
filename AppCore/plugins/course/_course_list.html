@@ -1,32 +1,45 @@
 <div ng-controller="listCourseCtrl">
 	<h3>Course List</h3>
-	<table class="table">
-		<tr>
-			<th>Name</th> <th>Description</th>
-		</tr>
-		<tr ng-repeat="c in courses">
-			<td>{{c.name}}</td>
-			<td>{{c.description}}</td>
-		</tr>
-	</table>
+	<b>Search</b> <input ng-model="courseName" ng-change="search()">
+	<div ng-show="courses && courses.length>0">
+		<table class="table">
+			<tr>
+				<th>Name</th> <th>Description</th>
+			</tr>
+			<tr ng-repeat="c in courses">
+				<td><a ng-click="viewCourse(c)" title="Click to view details." style="cursor: pointer;">{{c.name}}</a> </td>
+				<td>{{c.description}}</td>
+			</tr>
+		</table>
+	</div>
 </div>
 <script>
 app.controller("listCourseCtrl", function listCourseCtrl($scope, $http){
-	$scope.load = function load(){
-		//alert("loading course list");
-		$http.post(appBase.getRemoteURL("course/load"), { 'selector': {}})
+	
+	$scope.search = function search(){
+		if(!$scope.courseName || $scope.courseName.trim().length == 0){
+			$scope.courses = [];
+			return true;
+		}
+		
+		var condition = { 'selector': {'name':{$regex: $scope.courseName, $options: "i"}}};
+		//alert("condition : " + JSON.stringify(condition));
+		$http.post(appBase.getRemoteURL("course/load"), condition)
 		.then(
 			function(result){
 				//alert(JSON.stringify(result));
 				$scope.courses = result.data;
 			},
 			function (error) {
-				alert("Problem in adding course details. Try again");
+				alert("Problem in getting course listing. Try again");
 		    }
 		);
-		
 	}
-	
-	$scope.load();
+
+	// view action
+	$scope.viewCourse = function viewCourse(course){
+		window.location = appBase.getRemoteURL("pages/course.view?id=" + course._id);
+	}
+
 });
 </script>

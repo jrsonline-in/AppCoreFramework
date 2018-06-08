@@ -3,12 +3,12 @@
   "version": "0.0.1",
   "description": "Course Management",
   "author": "App Core",
-  "web-pages":[
+  "webPages":[
    	{
   		"id":"course.home",
   		"title":"Manage Course/Batch",
   		"description":"Manage courses and batches.",
-  		"parent":"app.configuration"
+  		"parent":"dashboard"
   	},
   	{
   		"id":"course.new",
@@ -23,6 +23,13 @@
   		"description":"List of courses.",
   		"parent":"course.home",
   		"templateUrl":"_course_list.html"
+  	},
+   	{
+  		"id":"course.view",
+  		"title":"View Course",
+   		"parent":"course.home",
+   		"listIndex":-1,
+  		"templateUrl":"_course_view.html"
   	}
   ],
   "web-services": [
