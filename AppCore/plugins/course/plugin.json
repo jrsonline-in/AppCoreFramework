@@ -1,15 +1,31 @@
 {
   "name": "module.course",
   "version": "0.0.1",
-  "description": "Course Management Web Service ",
+  "description": "Course Management",
   "author": "App Core",
   "web-pages":[
-  	{
+   	{
   		"id":"course.home",
-  		"title":"Course",
-  		"description":"Add a new course or batch for this academic year",
-  		"parent":"app.configuration",
-  		"template":"<p>Define a course</p>"
+  		"title":"Manage Course/Batch",
+  		"description":"Manage courses and batches.",
+  		"parent":"app.configuration"
+  	},
+  	{
+  		"id":"course.new",
+  		"title":"Add Course",
+  		"description":"Add a new course.",
+  		"parent":"course.home",
+  		"templateUrl":"_course_new.html"
+  	},
+  	{
+  		"id":"course.list",
+  		"title":"List Courses",
+  		"description":"List of courses.",
+  		"parent":"course.home",
+  		"templateUrl":"_course_list.html"
   	}
+  ],
+  "web-services": [
+  	{"prefix":"/course", "script":"course-web-service.js"}
   ]
 }

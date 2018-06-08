@@ -4,7 +4,7 @@ var httpBase = Platform.requirePlugin("base.web-service");
 //express : router
 var router = Platform.express.Router();
 
-// load web pages
+//load web pages
 Platform.registerWebPages();
 
 // load page
@@ -19,7 +19,11 @@ var subs_page_content = "__page.content__";
 function loadPage (req, res){
 	var pages = Platform.registry.pages;
 	//console.log("Pages : " + JSON.stringify(pages));
-	var pageId = req.path.substr(1);
+	var url = require('url');
+	var q = url.parse(req.url, true);
+	//console.log("Q :: " + JSON.stringify(q));
+	
+	var pageId = q.pathname.substr(1);
 	console.log("loading Page - " + pageId);
 	if(Object.keys(pages).indexOf(pageId) >= 0){
 		var fs = require("fs");

@@ -4,6 +4,7 @@ var baseDB = Platform.requirePlugin("base.db.mongo");
 
 // Collection: users
 var usersCollection ="users";
+exports.collection = usersCollection;
 
 exports.getUsers = function (selector, options, clbk)
 {

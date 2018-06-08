@@ -1,0 +1,58 @@
+<div ng-controller="newStudentCtrl">
+	<h3>New Student</h3>
+	<table class="table">
+		<!-- 
+		<tr>
+			<td>Select Course:</td>
+			<td>
+				<select ng-model="course" ng-options="c.name for c in courses" required="required"></select> {{course.description}}
+			</td>
+		</tr>
+		 -->
+		<tr>
+			<td>Student Code:</td><td><input ng-model="student._id"></td>
+		</tr>
+		<tr>
+			<td>Student Name:</td><td><input ng-model="student.name"></td>
+		</tr>
+		<tr>
+			<td><button ng-click="cancel()">Cancel</button><td><button ng-click="saveStudent()">Save</button></td>
+		</tr>
+	</table>
+</div>
+<script>
+app.controller("newStudentCtrl", function newStudentCtrl($scope, $http){
+	$scope.courses = [];
+	
+	// load courses
+	$http.post(appBase.getRemoteURL("course/load"), {})
+	.then(
+		function(result){
+			$scope.courses = result.data;
+		},
+		function (error) {
+			alert("Problem in loading list of courses.");
+	    }
+	);
+	
+	// save student
+	$scope.saveStudent = function saveStudent(){
+		var c = $scope.student;
+		//alert("Save Student : " + JSON.stringify(c));
+		$http.post(appBase.getRemoteURL("student/save"), { 'students': [c]})
+		.then(
+			function(result){
+				//alert("added student : " + JSON.stringify(c));
+				window.location = appBase.getRemoteURL("pages/student.view?id=" + c._id);
+			},
+			function (error) {
+				alert("Problem in adding student details. Try again");
+		    }
+		);
+	}
+	
+	$scope.cancel = function cancel(){
+		$scope.student = {};
+	}
+});
+</script>

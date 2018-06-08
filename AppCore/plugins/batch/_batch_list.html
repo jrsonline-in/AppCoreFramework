@@ -1,0 +1,33 @@
+<div ng-controller="listBatchCtrl">
+	<h3>Batch List</h3>
+	<table class="table">
+		<tr>
+			<th>Course Name</th> <th>Batch Name</th> <th>Batch Description</th>
+		</tr>
+		<tr ng-repeat="b in batches">
+			<td>{{b.course}}</td>
+			<td>{{b.name}}</td>
+			<td>{{b.description}}</td>
+		</tr>
+	</table>
+</div>
+<script>
+app.controller("listBatchCtrl", function listBatchCtrl($scope, $http){
+	$scope.load = function load(){
+		//alert("loading batch list");
+		$http.post(appBase.getRemoteURL("batch/load"), { 'selector': {}})
+		.then(
+			function(result){
+				//alert(JSON.stringify(result));
+				$scope.batches = result.data;
+			},
+			function (error) {
+				alert("Problem in adding batch details. Try again");
+		    }
+		);
+		
+	}
+	
+	$scope.load();
+});
+</script>

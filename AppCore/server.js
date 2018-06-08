@@ -13,10 +13,8 @@
 	//register static clients
 	Platform.registerStaticClients();
 	
-	//express : init
-	var bodyParser = require('body-parser');
-	Platform.app.use(bodyParser.json()); // for parsing application/json
-	Platform.app.use(bodyParser.urlencoded({ extended: true })); // for parsing application/x-www-form-urlencoded
+	// load web pages
+	Platform.registerWebPages();
 
 	// web server : start
 	var serverPort = 8080;

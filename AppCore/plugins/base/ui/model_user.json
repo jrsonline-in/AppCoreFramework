@@ -1,0 +1,28 @@
+{
+	"table":"users",
+	"fields":
+	[
+		{
+			"name":	"uname",
+			"type":"text",
+			"label":"User Name",
+			"description":"",
+			"edit-widget":{
+				"type":"text",
+				"placehoder":"Enter your name",
+				"required":true
+			}
+		}, 
+		{
+			"name":"pwd",
+			"type":"text",
+			"label":"Password",
+			"description":"",
+			"edit-widget":{
+				"type":"password",
+				"placehoder":"Enter your name",
+				"required":true
+			}
+		} 
+	]
+}

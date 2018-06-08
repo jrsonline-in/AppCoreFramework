@@ -1,0 +1,25 @@
+{
+  "name": "module.batch",
+  "version": "0.0.1",
+  "description": "Batch Management",
+  "author": "App Core",
+  "web-pages":[
+   	{
+  		"id":"batch.new",
+  		"title":"Add Batch",
+  		"description":"Add a new batch.",
+  		"parent":"course.home",
+  		"templateUrl":"_batch_new.html"
+  	},
+  	{
+  		"id":"batch.list",
+  		"title":"List Batches",
+  		"description":"List of batches.",
+  		"parent":"course.home",
+  		"templateUrl":"_batch_list.html"
+  	}
+  ],
+  "web-services": [
+  	{"prefix":"/batch", "script":"batch-web-service.js"}
+  ]
+}

@@ -5,6 +5,7 @@ global.Platform = Platform;
 Platform.fs = require("fs");
 Platform.PATH_SEP = "/";
 Platform.PLUGIN_FILE_NAME = "plugin.json";
+Platform.CONFIG_FILE = "platform.json"
 Platform.registry = {};
 
 Platform.inited = false;
@@ -21,6 +22,7 @@ function Platform(){
 
 //Platform : bootstrap
 Platform.bootstrap = function bootstrap(){
+	Platform.inited = false;
 	console.log("Bootstraping...");
 	
 	// Initialize Platform.
@@ -34,6 +36,8 @@ Platform.bootstrap = function bootstrap(){
 
 // Platform: init
 Platform.init = function init(){
+	Platform.registry = {};
+
 	// object: to store platform configuration, loaded from platform.json
 	function PlatformConfig(){
 		// properties
@@ -44,7 +48,7 @@ Platform.init = function init(){
 	
 	// load platform configuration from platform.json
 	Platform.config = new PlatformConfig();
-	Object.assign(Platform.config, JSON.parse(Platform.fs.readFileSync(Platform.root() + Platform.PATH_SEP + "platform.json")))
+	Object.assign(Platform.config, JSON.parse(Platform.fs.readFileSync(Platform.root() + Platform.PATH_SEP + Platform.CONFIG_FILE)))
 	console.log("platform config : " + JSON.stringify(Platform.config));
 	
 	// register plugins
@@ -151,6 +155,10 @@ Platform.initExpressApp = function initExpressApp(){
 		Platform.app = Platform.express();
 	}
 
+	//express : init
+	var bodyParser = require('body-parser');
+	Platform.app.use(bodyParser.json()); // for parsing application/json
+	Platform.app.use(bodyParser.urlencoded({ extended: true })); // for parsing application/x-www-form-urlencoded
 }
 
 //utility: registerStaticClients

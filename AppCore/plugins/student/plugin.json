@@ -7,10 +7,31 @@
   	{
   		"id":"student",
   		"title":"Students",
-  		"description":"Find Student details",
+  		"description":"Students",
   		"parent":"dashboard",
-  		"templateUrl":"student_search.html"
-  	}
-  	
+  		"templateUrl":"_student_search.html"
+  	},
+  	{
+  		"id":"student.list",
+  		"title":"Student List",
+  		"description":"List of students",
+  		"parent":"student",
+  		"templateUrl":"_student_list.html"
+  	},
+   	{
+  		"id":"student.new",
+  		"title":"Student Admission",
+  		"description":"New Student ",
+  		"parent":"student",
+  		"templateUrl":"_student_new.html"
+  	},
+  	{
+  		"id":"student.view",
+  		"title":"Student View",
+  		"templateUrl":"_student_view.html"
+  	}  	
+  ],
+  "web-services": [
+  	{"prefix":"/student", "script":"student-web-service.js"}
   ]
 }

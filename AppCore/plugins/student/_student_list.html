@@ -1,0 +1,38 @@
+<div ng-controller="listStudentCtrl">
+	<h3>Student List</h3>
+	<table class="table">
+		<tr>
+			<!-- <th>Course Name</th> --> <th>Student Name</th> <!-- <th>Student Description</th> -->
+		</tr>
+		<tr ng-repeat="student in students">
+			<!-- <td>{{student.course}}</td> -->
+			<td><a ng-click="viewStudent(student)" title="Click to view details." style="cursor: pointer;">{{student.name}}</a></td>
+			<!-- <td>{{student.description}}</td> -->
+		</tr>
+	</table>
+</div>
+<script>
+app.controller("listStudentCtrl", function listStudentCtrl($scope, $http){
+	function load(){
+		//alert("loading student list");
+		$http.post(appBase.getRemoteURL("student/load"), { 'selector': {}})
+		.then(
+			function(result){
+				//alert(JSON.stringify(result));
+				$scope.students = result.data;
+			},
+			function (error) {
+				alert("Problem in getting student listing. Try again");
+		    }
+		);
+		
+	}
+	// load list.
+	load();
+	
+	// view action
+	$scope.viewStudent = function viewStudent(st){
+		window.location = appBase.getRemoteURL("pages/student.view?id=" + st._id);
+	}
+});
+</script>

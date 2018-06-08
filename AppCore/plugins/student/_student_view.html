@@ -1,0 +1,147 @@
+<div ng-controller="viewStudentCtrl">
+	<h3>Student : {{student.name}}</h3>
+	<div> <!-- personal details -->
+		<table class="table">
+			<!-- 
+			<tr>
+				<td>Select Course:</td>
+				<td>
+					<select ng-model="course" ng-options="c.name for c in courses" required="required"></select> {{course.description}}
+				</td>
+			</tr>
+			 -->
+			<tr>
+				<td>Student Code:</td><td><span ng-show="editing"><input ng-model="student._id"></span><span ng-hide="editing">{{student._id}}</span></td>
+			</tr>
+			<tr>
+				<td>Student Name:</td><td><span ng-show="editing"><input ng-model="student.name"></span><span ng-hide="editing">{{student.name}}</span></td>
+			</tr>
+			<tr ng-hide="editing">
+				<td colspan="2"><button ng-click="editStudent()">Edit</button></td>
+			</tr>
+			<tr ng-show="editing">
+				<td><button ng-click="cancel()">Cancel</button><td><button ng-click="saveStudent()">Save</button><button ng-click="editStudent()">Edit</button></td>
+			</tr>
+		</table>
+	</div> 
+	<div> <!-- batch details -->
+		<h3>Batch List</h3>
+		<table class="table" ng-show="sbs && sbs.length>0">
+			<tr>
+				<th>Batch Name</th>
+			</tr>
+			<tr ng-repeat="b in sbs">
+				<td>{{b.batchId}}</td>
+			</tr>
+		</table>
+		<span> Add to batch : 
+			<select ng-model="batch" ng-options="b.name for b in batches" required="required"></select> {{"batch".description}}
+			<button ng-click="addToBatch()"> Add</button>
+		</span>
+	</div>
+</div>
+
+<script>
+app.controller("viewStudentCtrl", function viewStudentCtrl($scope, $http){
+	var studentId = null;
+	
+	$scope.addToBatch = function addToBatch(){
+		var student = $scope.student;
+		var batch = $scope.batch;
+		$http.post(appBase.getRemoteURL("sb/load"), { 'selector': {'studentId':student._id, 'batchId':batch._id}})
+		.then(
+			function(result){
+				//alert(JSON.stringify(result));
+				if(result.data && result.data.length >0){
+					alert("The student is already registered in selected batch. Try selecting a different batch.");
+				} else {
+					$http.post(appBase.getRemoteURL("sb/save"), { 'sbs': [{'studentId':student._id, 'batchId':batch._id}]})
+					.then(
+						function(result){
+							loadStudentBatches(student._id);
+						},
+						function (error) {
+							alert("Problem in saving student-batch mapping. Try again");
+					    }
+					);
+				}
+			},
+			function (error) {
+				alert("Problem in getting student-batch listing. Try again");
+		    }
+		);
+	}
+	// load student
+	function load(id){
+		if(!id){
+			//alert(window.location.search);
+			var urlParams = new URLSearchParams(window.location.search);
+			if(urlParams){
+				id=urlParams.get("id");
+			} else {
+				return;
+			}
+		}
+		
+		// load student details
+		$http.post(appBase.getRemoteURL("student/load"), { 'selector': {_id:id}})
+		.then(
+			function(result){
+				//alert(JSON.stringify(result));
+				if(result.data && result.data.length >0){
+					$scope.student = result.data[0];
+				} else {
+					alert("Student details not found")
+				}
+			},
+			function (error) {
+				alert("Problem in getting student listing. Try again");
+		    }
+		);
+		
+		// load batches
+		loadStudentBatches(id);
+		
+		// load all batches.
+		loadAllBatches();
+	}
+	
+	// call 
+	load();
+	
+	function loadStudentBatches(stId){
+		// load student batch details
+		$http.post(appBase.getRemoteURL("sb/load"), { 'selector': {'studentId':stId}})
+		.then(
+			function(result){
+				//alert(JSON.stringify(result));
+				if(result.data){
+					$scope.sbs = result.data;
+					//alert(JSON.stringify($scope.sbs));
+				} else {
+					alert("No Student-batch details found.")
+				}
+			},
+			function (error) {
+				alert("Problem in getting student-batch listing. Try again");
+		    }
+		);
+	}
+	
+	// load all batches.
+	function loadAllBatches(){
+		//alert("loading batch list");
+		$http.post(appBase.getRemoteURL("batch/load"), { 'selector': {}})
+		.then(
+			function(result){
+				//alert(JSON.stringify(result));
+				$scope.batches = result.data;
+			},
+			function (error) {
+				alert("Problem in adding batch details. Try again");
+		    }
+		);
+		
+	}
+});
+</script>

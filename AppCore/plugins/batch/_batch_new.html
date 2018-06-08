@@ -1,0 +1,63 @@
+<div ng-controller="newBatchCtrl">
+	<h3>New Batch</h3>
+	<table class="table">
+		<tr>
+			<td>Select Course:</td>
+			<td>
+				<select ng-model="course" ng-options="c.name for c in courses" required="required"></select> {{course.description}}
+			</td>
+		</tr>
+		<tr>
+			<td>Batch Name:</td><td><input ng-model="batch.name"></td>
+		</tr>
+		<tr>
+			<td>Batch Description:</td><td><input ng-model="batch.description"></td>
+		</tr>
+		<tr>
+			<td><button ng-click="cancel()">Cancel</button><td><button ng-click="saveBatch()">Save</button></td>
+		</tr>
+	</table>
+</div>
+<script>
+app.controller("newBatchCtrl", function newBatchCtrl($scope, $http){
+	$scope.courses = [];
+	
+	// load courses
+	$http.post(appBase.getRemoteURL("course/load"), {})
+	.then(
+		function(result){
+			$scope.courses = result.data;
+		},
+		function (error) {
+			alert("Problem in loading list of courses.");
+	    }
+	);
+	
+	// save batch
+	$scope.saveBatch = function saveBatch(){
+		var batch = $scope.batch;
+		if(!$scope.course){
+			alert("Please select a course.");
+			return;
+		}
+		batch.course = $scope.course.name;
+		batch._id = batch.name;
+		
+		alert("Save Batch : " + JSON.stringify(batch));
+		$http.post(appBase.getRemoteURL("batch/save"), { 'batches': [batch]})
+		.then(
+			function(result){
+				alert("added batch : " + JSON.stringify(batch));
+				window.location = appBase.getRemoteURL("pages/batch.list");
+			},
+			function (error) {
+				alert("Problem in adding batch details. Try again");
+		    }
+		);
+	}
+	
+	$scope.cancel = function cancel(){
+		$scope.batch = {};
+	}
+});
+</script>

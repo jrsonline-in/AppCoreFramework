@@ -1,0 +1,37 @@
+<div ng-controller="newCourseCtrl">
+	<h3>New Course</h3>
+	<table class="table">
+		<tr>
+			<td>Name:</td><td><input ng-model="course.name"></td>
+		</tr>
+		<tr>
+			<td>Description:</td><td><input ng-model="course.description"></td>
+		</tr>
+		<tr>
+			<td><button ng-click="cancel()">Cancel</button><td><button ng-click="saveCourse()">Save</button></td>
+		</tr>
+	</table>
+</div>
+<script>
+app.controller("newCourseCtrl", function newCourseCtrl($scope, $http){
+	$scope.saveCourse = function saveCourse(){
+		var c = $scope.course;
+		c._id = c.name;
+		alert("Save Course : " + JSON.stringify(c));
+		$http.post(appBase.getRemoteURL("course/save"), { 'courses': [c]})
+		.then(
+			function(result){
+				alert("added course : " + JSON.stringify(c));
+				window.location = appBase.getRemoteURL("pages/course.list");
+			},
+			function (error) {
+				alert("Problem in adding course details. Try again");
+		    }
+		);
+	}
+	
+	$scope.cancel = function cancel(){
+		$scope.course = {};
+	}
+});
+</script>

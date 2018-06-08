@@ -1,0 +1,9 @@
+{
+  "name": "module.student-batch",
+  "version": "0.0.1",
+  "description": "Student-Batch Management",
+  "author": "App Core",
+  "web-services": [
+  	{"prefix":"/sb", "script":"student-batch-web-service.js"}
+  ]
+}

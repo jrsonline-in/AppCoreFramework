@@ -1,0 +1,52 @@
+<hr><br>
+<div ng-controller="studentSearchCtrl">
+	<b>Search</b> <input ng-model="stName" ng-change="search()">
+	<!-- 
+	<input type="radio" name="st_type" value=""> Present students
+	<input type="radio" name="st_type" value=""> Former students
+	 --> 
+	 <button ng-click="search()">Search</button>
+	<br>
+	<div ng-show="students && students.length>0">
+	<table class="table">
+		<tr>
+			<th>Student Name</th>
+		</tr>
+		<tr ng-repeat="student in students">
+			<td><a ng-click="viewStudent(student)" title="Click to view details." style="cursor: pointer;">{{student.name}}</a></td>
+		</tr>
+	</table>
+	</div>
+</div>
+<script>
+app.controller("studentSearchCtrl", 
+	function studentSearchCtrl($scope, $http){
+		
+		$scope.search = function search(){
+			//alert("search");
+			if(!$scope.stName || $scope.stName.trim().length == 0){
+				$scope.students = [];
+				return;
+			}
+			var condition = { 'selector': {'name':{$regex: $scope.stName, $options: "i"}}};
+			//alert("condition : " + JSON.stringify(condition));
+			$http.post(appBase.getRemoteURL("student/load"), condition)
+			.then(
+				function(result){
+					//alert(JSON.stringify(result));
+					$scope.students = result.data;
+				},
+				function (error) {
+					alert("Problem in getting student listing. Try again");
+			    }
+			);
+		}
+		
+		// view action
+		$scope.viewStudent = function viewStudent(st){
+			window.location = appBase.getRemoteURL("pages/student.view?id=" + st._id);
+		}
+	}
+	
+);
+</script>

@@ -1,0 +1,32 @@
+<div ng-controller="listCourseCtrl">
+	<h3>Course List</h3>
+	<table class="table">
+		<tr>
+			<th>Name</th> <th>Description</th>
+		</tr>
+		<tr ng-repeat="c in courses">
+			<td>{{c.name}}</td>
+			<td>{{c.description}}</td>
+		</tr>
+	</table>
+</div>
+<script>
+app.controller("listCourseCtrl", function listCourseCtrl($scope, $http){
+	$scope.load = function load(){
+		//alert("loading course list");
+		$http.post(appBase.getRemoteURL("course/load"), { 'selector': {}})
+		.then(
+			function(result){
+				//alert(JSON.stringify(result));
+				$scope.courses = result.data;
+			},
+			function (error) {
+				alert("Problem in adding course details. Try again");
+		    }
+		);
+		
+	}
+	
+	$scope.load();
+});
+</script>

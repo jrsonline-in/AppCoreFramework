@@ -11,5 +11,9 @@
 		"description":"Set/Modify application configurations",
    		"parent":"dashboard"
 	} 
+  ],
+  "web-services": [
+  	{"prefix":"/config", "script":"config-web-service.js"}
   ]
+  
 }

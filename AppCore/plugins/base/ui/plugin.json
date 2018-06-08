@@ -1,0 +1,7 @@
+{
+  "name": "base.ui.builder",
+  "version": "0.0.1",
+  "description": "Base UI builder",
+  "author": "App Core",
+  "script":"ui-builder.js"
+}

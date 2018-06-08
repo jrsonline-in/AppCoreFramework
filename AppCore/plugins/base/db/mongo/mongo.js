@@ -1,5 +1,5 @@
 var url = "mongodb://localhost:27017";
-var dbname = "fullblend";
+var dbname = "excellence";
 
 var MongoClient = require('mongodb').MongoClient;
 

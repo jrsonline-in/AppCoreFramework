@@ -36,15 +36,12 @@
 		</div>
 		<hr>
 		<!-- description -->
-		<div ng-show="page.description">
-			<p>{{page.description}}</p>
-			<hr>
-		</div>
+		<p>{{page.description}}</p>
 		<!-- children link sections -->
 		<div class="row">
 			<div ng-repeat="link in links" class="col-sm-6">
-				<span style="font-size: 20px; color:blue;"><a href="/pages/{{link['id']}}">{{link.title}}</a></span><br>
-				<span>{{link.description}}</span><br><br>
+				<a href="/pages/{{link['id']}}">{{link.title}}</a><br>
+				<span>{{link.description}}</span>
 			</div>
 		</div>
 		<!-- Page content -->

@@ -8,7 +8,8 @@
   	{
   		"id":"dashboard",
   		"title":"Home",
-  		"description":"The Application Dashboard"
+  		"description":"The Application Dashboard",
+  		"templateUrl":"_dashboard.html"
   	} 
   ]
 }

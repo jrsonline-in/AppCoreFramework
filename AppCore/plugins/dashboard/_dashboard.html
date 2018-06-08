@@ -1,0 +1,21 @@
+<div ng-controller="dashboardCtrl" ng-hide="false">
+	<button ng-click="reload()">Reload Application Platform</button>
+</div>
+<script>
+app.controller("dashboardCtrl", function dashboardCtrl($scope, $http){
+	$scope.reload = function reload(){
+		alert("Reloading the Application Platform");
+		$http.get(appBase.getRemoteURL("config/reloadPlatform"))
+		.then(
+			function(result){
+				alert("Reloading the page");
+				location.reload(true);
+			},
+			function (error) {
+				alert("Problem in reloading application platform. Try again later.");
+		    }
+		);
+		// reload
+	}
+});
+</script>
